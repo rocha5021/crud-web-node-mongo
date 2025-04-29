@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Simples</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Cadastro de Usuários</h1>
+
+  <form id="user-form">
+    <input type="text" id="name" placeholder="Nome" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <button type="submit">Salvar</button>
+  </form>
+
+  <table id="user-table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById("user-form");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const API_URL = "https://api.example.com/users";
+    let editId = null;
+
+    // Adicionar mensagens de erro no formulário
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        const user = {
+          name: nameInput.value,
+          email: emailInput.value,
+        };
+
+        if (editId) {
+          await fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user),
+          });
+          editId = null;
+        } else {
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user),
+          });
+        }
+
+        form.reset();
+        loadUsers();
+      } catch (error) {
+        alert("Ocorreu um erro ao salvar o usuário.");
+      }
+    });
+  </script>
+</body>
+</html>
